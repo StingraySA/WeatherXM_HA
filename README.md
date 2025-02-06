@@ -148,6 +148,42 @@ recorder:
     entities: sensor.weatherxm
 ```
 
+### Make it Look Nice
+
+Add the following to your `configuration.yaml` file:
+
+```yaml
+homeassistant:
+  customize: !include customize.yaml
+```
+
+Next create a file `customize.yaml` if it does not exist. If it does exist, just add below:
+
+```yaml
+sensor.weatherxm_temperature:
+  icon: mdi:thermometer
+sensor.weatherxm_humidity:
+  icon: mdi:water-percent
+sensor.weatherxm_wind_speed:
+  icon: mdi:weather-windy
+sensor.weatherxm_wind_gust:
+  icon: mdi:weather-windy-variant
+sensor.weatherxm_wind_direction:
+  icon: mdi:compass
+sensor.weatherxm_illuminance:
+  icon: mdi:brightness-5
+sensor.weatherxm_solar_irradiance:
+  icon: mdi:solar-power
+sensor.weatherxm_uv_index:
+  icon: mdi:white-balance-sunny
+sensor.weatherxm_precipitation_accumulated:
+  icon: mdi:weather-rainy
+sensor.weatherxm_battery_voltage:
+  icon: mdi:battery
+```
+
+*Important: Restart Home Assistant for this to take effect or go to Developer Tools -> YAML -> Location & Customisations*
+
 ### Final Steps
 
 Restart Home Assistant, and you should see all your new weather sensors. Note that it may take some time for the initial values to be populated, as they depend on the next polling interval of the weather station.
