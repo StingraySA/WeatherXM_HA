@@ -136,6 +136,17 @@ Then, add the following template sensors to extract the values from the debug ou
           unknown
         {% endif %}
       unit_of_measurement: "hPa"
+
+    weatherxm_precipitation_rate:
+      friendly_name: "WeatherXM Precipitation Rate"
+      value_template: >-
+        {% set value = states('sensor.weatherxm') %}
+        {% if '"precipitation_rate":' in value %}
+          {{ value.split('"precipitation_rate": ')[1].split(',')[0] }}
+        {% else %}
+          unknown
+        {% endif %}
+      unit_of_measurement: "mm/h"
 ```
 
 ### Excluding from Recorder
