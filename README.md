@@ -147,6 +147,44 @@ Then, add the following template sensors to extract the values from the debug ou
           unknown
         {% endif %}
       unit_of_measurement: "mm/h"
+
+    weatherxm_wind_compass:
+      friendly_name: "WeatherXM Wind Direction Compass"
+      value_template: >-
+        {% set degrees = states('sensor.weatherxm_wind_direction') | float(0) %}
+        {% if degrees >= 337.5 or degrees < 22.5 %}
+          N
+        {% elif degrees >= 22.5 and degrees < 67.5 %}
+          NE
+        {% elif degrees >= 67.5 and degrees < 112.5 %}
+          E
+        {% elif degrees >= 112.5 and degrees < 157.5 %}
+          SE
+        {% elif degrees >= 157.5 and degrees < 202.5 %}
+          S
+        {% elif degrees >= 202.5 and degrees < 247.5 %}
+          SW
+        {% elif degrees >= 247.5 and degrees < 292.5 %}
+          W
+        {% elif degrees >= 292.5 and degrees < 337.5 %}
+          NW
+        {% else %}
+          The World is Ending!
+        {% endif %}
+
+    weatherxm_wind_speed_knots:
+      friendly_name: "WeatherXM Wind Speed (Knots)"
+      value_template: >-
+        {% set speed = states('sensor.weatherxm_wind_speed') | float(0) %}
+        {{ (speed * 1.94384) | round(2) }}
+      unit_of_measurement: "kt"
+
+    weatherxm_wind_speed_kmh:
+      friendly_name: "WeatherXM Wind Speed (km/h)"
+      value_template: >-
+        {% set speed = states('sensor.weatherxm_wind_speed') | float(0) %}
+        {{ (speed * 3.6) | round(2) }}
+      unit_of_measurement: "km/h"
 ```
 
 ### Excluding from Recorder
@@ -195,6 +233,12 @@ sensor.weatherxm_precipitation_rate:
   icon: mdi:weather-pouring
 sensor.weatherxm_pressure:
   icon: mdi:gauge
+sensor.weatherxm_wind_compass:
+  icon: mdi:compass
+sensor.weatherxm_wind_speed_knots:
+  icon: mdi:speedometer
+sensor.weatherxm_wind_speed_kmh:
+  icon: mdi:speedometer
 ```
 
 *Important: Restart Home Assistant for this to take effect or go to Developer Tools -> YAML -> Location & Customisations*
