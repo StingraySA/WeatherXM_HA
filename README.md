@@ -205,6 +205,7 @@ It seems the rainfall doesn't get reset daily from the sensor, so let's do this 
 First edit your `configuration.yaml` file, and add two input sensors:
 
 ```yaml
+input_number:
   weatherxm_rain_accumulated_storage:
     name: WeatherXM Daily Rain Accumulation Storage
     min: 0
