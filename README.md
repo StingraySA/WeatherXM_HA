@@ -193,9 +193,80 @@ sensor.weatherxm_battery_voltage:
   icon: mdi:battery
 sensor.weatherxm_precipitation_rate:
   icon: mdi:weather-pouring
+sensor.weatherxm_pressure:
+  icon: mdi:gauge
 ```
 
 *Important: Restart Home Assistant for this to take effect or go to Developer Tools -> YAML -> Location & Customisations*
+
+### Sorting Out Rainfall
+
+It seems the rainfall doesn't get reset daily from the sensor, so let's do this in Home Assistant with some Automations:
+First edit your `configuration.yaml` file, and add two input sensors:
+
+```yaml
+  weatherxm_rain_accumulated_storage:
+    name: WeatherXM Daily Rain Accumulation Storage
+    min: 0
+    max: 100000
+    step: 1
+    unit_of_measurement: "mm"
+
+  daily_rain_fall:
+    name: Daily Rainfall
+    min: 0
+    max: 1000
+    step: 1
+    unit_of_measurement: "mm"
+```
+
+*Important: Restart Home Assistant so the new sensors can be enabled or go to Developer Tools -> YAML -> Input Numbers*
+
+Next up we need to make the automations to calculate the daily rainfall and reset it at 0:00.
+Go to Settings -> Automations & scenes -> Create Automation
+Click on Add Trigger and select Entity -> State
+Under Entity, select `weatherxm_precipitation_accumulated`.
+Scroll down to Then Do and click on Add Action.
+Type `input number` in the search box and select `Input Number: Set`
+Click on the three dots on the right of the heading and select Edit in YAML.
+Paste below:
+
+```yaml
+action: input_number.set_value
+metadata: {}
+data:
+  value: >-
+    {{ (states('sensor.weatherxm_precipitation_accumulated') | float) -
+    (states('input_number.weatherxm_rain_accumulated_storage') | float) }}
+target:
+  entity_id: input_number.daily_rain_fall
+```
+
+Save the automation as `Update Daily Rainfall`. Next we need to reset the daily rainfall at 0:00.
+Create a new Automation and then click on Add Trigger.
+Select Time and Location -> Time.
+Select fixed time, and change the time to 00:00:00
+Next Add Action then once again type `input number` in the search box and select `Input Number: Set`
+Again click on the three dots, and Edit in YAML.
+Paste below:
+
+```yaml
+action: input_number.set_value
+metadata: {}
+data:
+  value: "{{ states('sensor.weatherxm_precipitation_accumulated') | float(0) }}"
+target:
+  entity_id: input_number.weatherxm_rain_accumulated_storage
+```
+
+Add another action and again search for `input number` and select `Input Number: Set`
+This time, click on Choose Entity and select `input_number.daily_rain_fall`.
+In Value just enter a zero.
+
+That's it. Now the accumulated rainfall number from the WeatherXM station will be saved to
+input_number.weatherxm_rain_accumulated_storage, and the daily rainfall will be zero'd.
+When the weatherxm_precipitation_accumulated changes, the stored value will be subtracted
+from the reading received from the station, giving you an accurate value for your daily rainfall.
 
 ### Final Steps
 
