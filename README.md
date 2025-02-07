@@ -257,7 +257,7 @@ input_number:
     step: 1
     unit_of_measurement: "mm"
 
-  daily_rain_fall:
+  weatherxm_daily_rainfall:
     name: Daily Rainfall
     min: 0
     max: 1000
@@ -284,7 +284,7 @@ data:
     {{ (states('sensor.weatherxm_precipitation_accumulated') | float) -
     (states('input_number.weatherxm_rain_accumulated_storage') | float) }}
 target:
-  entity_id: input_number.daily_rain_fall
+  entity_id: input_number.weatherxm_daily_rainfall
 ```
 
 Save the automation as `Update Daily Rainfall`. Next we need to reset the daily rainfall at 0:00.
@@ -314,7 +314,7 @@ target:
 ```
 
 Add another action and again search for `input number` and select `Input Number: Set`
-This time, click on Choose Entity and select `input_number.daily_rain_fall`.
+This time, click on Choose Entity and select `input_number.weatherxm_daily_rainfall`.
 In Value just enter a zero.
 
 That's it. Now the accumulated rainfall number from the WeatherXM station will be saved to
