@@ -101,7 +101,7 @@ Then, add the following template sensors to extract the values from the debug ou
         {% if '"uv_index":' in value %}
             {{ value.split('"uv_index": ')[1].split(',')[0] }}
         {% else %}
-          unknown
+          0
         {% endif %}
     
     weatherxm_precipitation_accumulated:
