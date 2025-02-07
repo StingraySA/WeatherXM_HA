@@ -191,6 +191,8 @@ sensor.weatherxm_precipitation_accumulated:
   icon: mdi:weather-rainy
 sensor.weatherxm_battery_voltage:
   icon: mdi:battery
+sensor.weatherxm_precipitation_rate:
+  icon: mdi:weather-pouring
 ```
 
 *Important: Restart Home Assistant for this to take effect or go to Developer Tools -> YAML -> Location & Customisations*
