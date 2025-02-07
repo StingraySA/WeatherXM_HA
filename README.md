@@ -258,7 +258,7 @@ input_number:
     unit_of_measurement: "mm"
 
   weatherxm_daily_rainfall:
-    name: Daily Rainfall
+    name: WeatherXM Daily Rainfall
     min: 0
     max: 1000
     step: 1
