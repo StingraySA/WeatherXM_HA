@@ -291,6 +291,15 @@ Save the automation as `Update Daily Rainfall`. Next we need to reset the daily 
 Create a new Automation and then click on Add Trigger.
 Select Time and Location -> Time.
 Select fixed time, and change the time to 00:00:00
+
+Now we need to add a condition, so the value can persist a restart, so click on Add Condition -> Other Conditions -> Template
+and paste below in the Value Template field:
+
+```yaml
+{{ not is_state('sensor.uptime', 'unavailable') }}
+```
+
+
 Next Add Action then once again type `input number` in the search box and select `Input Number: Set`
 Again click on the three dots, and Edit in YAML.
 Paste below:
