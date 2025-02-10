@@ -281,8 +281,8 @@ action: input_number.set_value
 metadata: {}
 data:
   value: >-
-    {{ (states('sensor.weatherxm_precipitation_accumulated') | float) -
-    (states('input_number.weatherxm_rain_accumulated_storage') | float) }}
+    {{ ((states('sensor.weatherxm_precipitation_accumulated') | float) -
+        (states('input_number.weatherxm_rain_accumulated_storage') | float)) | round(2) }}
 target:
   entity_id: input_number.weatherxm_daily_rainfall
 ```
