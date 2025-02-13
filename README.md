@@ -322,6 +322,64 @@ input_number.weatherxm_rain_accumulated_storage, and the daily rainfall will be 
 When the weatherxm_precipitation_accumulated changes, the stored value will be subtracted
 from the reading received from the station, giving you an accurate value for your daily rainfall.
 
+### Max Wind Speed
+
+Now that we've got the basics down, let's add some nice to have sensors. First we'll do the max wind speed. Once again add an input sensor to the `configuration.yaml` file:
+
+```yaml
+weatherxm_daily_max_wind_speed:
+  name: WeatherXM Daily Maximum Wind Speed
+  min: 0
+  max: 200
+  step: 1
+  unit_of_measurement: "km/h"
+```
+Next we need to add an automation to update our sensor value. So go to Settings -> Automations & scenes and then click on Create Automation.
+In the top right hand corner, click on the three dots and select Edit in YAML.
+
+```yaml
+alias: Update Max Wind Speed - WeatherXM
+description: Update Max Wind Speed - WeatherXM
+triggers:
+  - entity_id: sensor.weatherxm_wind_speed_kmh
+    trigger: state
+conditions:
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_wind_speed_kmh
+    above: input_number.weatherxm_daily_max_wind_speed
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_wind_speed_kmh
+    above: -0.1
+actions:
+  - data:
+      value: "{{ states('sensor.weatherxm_wind_speed_kmh') | float }}"
+    target:
+      entity_id: input_number.weatherxm_daily_max_wind_speed
+    action: input_number.set_value
+mode: single
+```
+
+Now the sensor will update if the wind speed exceeds the value stored in our new input sensor. Now we need to reset this sensor every night at 0:00. So add another automation and click on the Edit in YAML.
+
+```yaml
+alias: Reset Daily Max Wind Speed - WeatherXM
+description: ""
+triggers:
+  - trigger: time
+    at: "00:00:00"
+conditions: []
+actions:
+  - action: input_number.set_value
+    metadata: {}
+    data:
+      value: 0
+    target:
+      entity_id: input_number.weatherxm_daily_max_wind_speed
+mode: single
+```
+
+That's it. Now you've got a sensor to show the max wind speed for the day.
+
 ### Final Steps
 
 Restart Home Assistant, and you should see all your new weather sensors. Note that it may take some time for the initial values to be populated, as they depend on the next polling interval of the weather station.
