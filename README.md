@@ -380,6 +380,109 @@ mode: single
 
 That's it. Now you've got a sensor to show the max wind speed for the day.
 
+### Min/Max Temperatures
+
+Right, on to min and max temps. Once again we'll use input numbers to save our values. Add below to your `configuration.yaml` file:
+
+```yaml
+  weatherxm_daily_min_temperature:
+    name: Daily Minimum Temperature
+    min: -50
+    max: 100
+    step: 0.1
+    unit_of_measurement: "°C"
+
+  weatherxm_daily_max_temperature:
+    name: Daily Maximum Temperature
+    min: -50
+    max: 100
+    step: 0.1
+    unit_of_measurement: "°C"
+```
+
+As before we need to add automations to save our Min and Max temperatures. So add below automations as we did before:
+
+```yaml
+alias: Update Max Temperature - WeatherXM
+description: Update Max Temperature - WeatherXM
+trigger:
+  - platform: state
+    entity_id: sensor.weatherxm_temperature
+
+condition:
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_temperature
+    above: input_number.weatherxm_daily_max_temperature
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_temperature
+    above: -50  # Ensures the sensor reports a valid temperature
+
+action:
+  - service: system_log.write
+    data:
+      message: "Triggered! Temperature: {{ states('sensor.weatherxm_temperature') }}"
+      level: warning
+
+  - service: input_number.set_value
+    data:
+      value: "{{ states('sensor.weatherxm_temperature') | float }}"
+    target:
+      entity_id: input_number.weatherxm_daily_max_temperature
+
+mode: single
+```
+
+```yaml
+alias: Update Min Temperature - WeatherXM
+description: Update Max Temperature - WeatherXM
+trigger:
+  - platform: state
+    entity_id: sensor.weatherxm_temperature
+
+condition:
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_temperature
+    below: input_number.weatherxm_daily_min_temperature
+  - condition: numeric_state
+    entity_id: sensor.weatherxm_temperature
+    above: -50  # Ensures the sensor reports a valid temperature
+
+action:
+  - service: system_log.write
+    data:
+      message: "Triggered! Temperature: {{ states('sensor.weatherxm_temperature') }}"
+      level: warning
+
+  - service: input_number.set_value
+    data:
+      value: "{{ states('sensor.weatherxm_temperature') | float }}"
+    target:
+      entity_id: input_number.weatherxm_daily_min_temperature
+
+mode: single
+```
+
+All that's left now is to reset the Min/Max temps at 0:00. So add another automation:
+
+```yaml
+alias: Reset Daily Min/Max Temps - WeatherXM
+description: ""
+triggers:
+  - trigger: time
+    at: "00:00:00"
+conditions: []
+actions:
+  - action: input_number.set_value
+    metadata: {}
+    data:
+      value: "{{ states('sensor.weatherxm_temperature') | float }}"
+    target:
+      entity_id:
+        - input_number.weatherxm_daily_max_temperature
+        - input_number.weatherxm_daily_min_temperature
+mode: single
+```
+
 ### Final Steps
 
 Restart Home Assistant, and you should see all your new weather sensors. Note that it may take some time for the initial values to be populated, as they depend on the next polling interval of the weather station.
