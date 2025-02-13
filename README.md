@@ -1,5 +1,17 @@
 # WeatherXM Home Assistant Integration
 
+This repo was created to help WeatherXM users retrieve data that is streamed from the weather station to the base station while it's plugged into your RPi or whatever you are using to host your Home Assistant installation.
+
+* This does not affect your ability to mine at all. We are merely listening on the wire as the data is streamed from the weather station
+
+![Sensors][./WeatherXM%20Sensors.png]
+
+Here's an example of a weather dashboard created with the data:
+
+![Dash][./WeatherXM%20Weather%20Dash.png]
+
+### Start Here
+
 In Home Assistant, create a new serial sensor in the `configuration.yaml` file. If you have a separate `sensors.yaml` file, do it there.
 
 Next, find out which port your WeatherXM is plugged into. Go to **Settings -> System -> Hardware -> All Hardware** and look for USB. There should be an entry with `usb-Espressif_USB_JTAG...` in the description. Click on the arrow to the right and copy the device path. It should be something like `/dev/ttyACM0`.
