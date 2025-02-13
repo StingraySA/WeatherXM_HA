@@ -346,6 +346,7 @@ weatherxm_daily_max_wind_speed:
   step: 1
   unit_of_measurement: "km/h"
 ```
+Once the input number has been added, go to Developer Tools and click on Input Numbers to load the new input number.
 Next we need to add an automation to update our sensor value. So go to Settings -> Automations & scenes and then click on Create Automation.
 In the top right hand corner, click on the three dots and select Edit in YAML.
 
@@ -411,7 +412,7 @@ Right, on to min and max temps. Once again we'll use input numbers to save our v
     step: 0.1
     unit_of_measurement: "°C"
 ```
-
+Once the input numbers has been added, go to Developer Tools and click on Input Numbers to load the new input numbers.
 As before we need to add automations to save our Min and Max temperatures. So add below automations as we did before:
 
 ```yaml
