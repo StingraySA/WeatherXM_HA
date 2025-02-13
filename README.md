@@ -2,7 +2,7 @@
 
 This repo was created to help WeatherXM users retrieve data that is streamed from the weather station to the base station while it's plugged into your RPi or whatever you are using to host your Home Assistant installation.
 
-* This does not affect your ability to mine at all. We are merely listening on the wire as the data is streamed from the weather station
+**This does not affect your ability to mine at all. We are merely listening on the wire as the data is streamed from the weather station**
 
 ![Sensors](./WeatherXM%20Sensors.png)
 
