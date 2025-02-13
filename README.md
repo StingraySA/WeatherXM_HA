@@ -4,11 +4,11 @@ This repo was created to help WeatherXM users retrieve data that is streamed fro
 
 * This does not affect your ability to mine at all. We are merely listening on the wire as the data is streamed from the weather station
 
-![Sensors][./WeatherXM%20Sensors.png]
+![Sensors](./WeatherXM%20Sensors.png)
 
 Here's an example of a weather dashboard created with the data:
 
-![Dash][./WeatherXM%20Weather%20Dash.png]
+![Dash](./WeatherXM%20Weather%20Dash.png)
 
 ### Start Here
 
