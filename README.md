@@ -36,98 +36,105 @@ Then, add the following template sensors to extract the values from the debug ou
         {% set value = states('sensor.weatherxm') %}
         {% if '"temperature":' in value %}
           {{ value.split('"temperature": ')[1].split(',')[0] }}
+        {% elif 'Temperature:' in value %}
+          {{ value.split('Temperature: ')[1].split(' C')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "°C"
-    
     weatherxm_humidity:
       friendly_name: "WeatherXM Humidity"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"humidity":' in value %}
           {{ value.split('"humidity": ')[1].split(',')[0] }}
+        {% elif 'Humidity:' in value %}
+          {{ value.split('Humidity: ')[1].split(' ')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "%"
-    
     weatherxm_wind_speed:
       friendly_name: "WeatherXM Wind Speed"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"wind_speed":' in value %}
           {{ value.split('"wind_speed": ')[1].split(',')[0] }}
+        {% elif 'Wind speed:' in value %}
+          {{ value.split('Wind speed: ')[1].split(' m/S')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "m/s"
-    
     weatherxm_wind_gust:
       friendly_name: "WeatherXM Wind Gust"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"wind_gust":' in value %}
           {{ value.split('"wind_gust": ')[1].split(',')[0] }}
+        {% elif 'Gust:' in value %}
+          {{ value.split('Gust: ')[1].split(' m/S')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "m/s"
-    
     weatherxm_wind_direction:
       friendly_name: "WeatherXM Wind Direction"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"wind_direction":' in value %}
           {{ value.split('"wind_direction": ')[1].split(',')[0] }}
+        {% elif 'Wind Dir:' in value %}
+          {{ value.split('Wind Dir: ')[1].split(' deg')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "°"
-    
     weatherxm_illuminance:
       friendly_name: "WeatherXM Illuminance"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"illuminance":' in value %}
           {{ value.split('"illuminance": ')[1].split(',')[0] }}
+        {% elif 'Illuminance:' in value %}
+          {{ value.split('Illuminance: ')[1].split(' lux')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "lux"
-    
     weatherxm_solar_irradiance:
       friendly_name: "WeatherXM Solar Irradiance"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
-        {% if 'Solar rad:' in value %}
-            {{ value.split('Solar rad: ')[1].split(' ')[0] }}
+        {% if '"solar_irradiance":' in value %}
+          {{ value.split('"solar_irradiance": ')[1].split(',')[0] }}
+        {% elif 'Solar rad:' in value %}
+          {{ value.split('Solar rad: ')[1].split(' w/m^2')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "w/m²"
-    
     weatherxm_uv_index:
       friendly_name: "WeatherXM UV Index"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"uv_index":' in value %}
-            {{ value.split('"uv_index": ')[1].split(',')[0] }}
+          {{ value.split('"uv_index": ')[1].split(',')[0] }}
         {% else %}
           0
         {% endif %}
-    
     weatherxm_precipitation_accumulated:
       friendly_name: "WeatherXM Precipitation Accumulated"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
         {% if '"precipitation_accumulated":' in value %}
           {{ value.split('"precipitation_accumulated": ')[1].split(',')[0] }}
+        {% elif 'Rain (cml):' in value %}
+          {{ value.split('Rain (cml): ')[1].split(' mm')[0] }}
         {% else %}
           unknown
         {% endif %}
       unit_of_measurement: "mm"
-    
     weatherxm_battery_voltage:
       friendly_name: "WeatherXM Battery Voltage"
       value_template: >-
@@ -138,7 +145,6 @@ Then, add the following template sensors to extract the values from the debug ou
           unknown
         {% endif %}
       unit_of_measurement: "mV"
-    
     weatherxm_pressure:
       friendly_name: "WeatherXM Pressure"
       value_template: >-
@@ -149,7 +155,6 @@ Then, add the following template sensors to extract the values from the debug ou
           unknown
         {% endif %}
       unit_of_measurement: "hPa"
-
     weatherxm_precipitation_rate:
       friendly_name: "WeatherXM Precipitation Rate"
       value_template: >-
@@ -160,7 +165,6 @@ Then, add the following template sensors to extract the values from the debug ou
           unknown
         {% endif %}
       unit_of_measurement: "mm/h"
-
     weatherxm_wind_compass:
       friendly_name: "WeatherXM Wind Direction Compass"
       value_template: >-
@@ -184,14 +188,12 @@ Then, add the following template sensors to extract the values from the debug ou
         {% else %}
           The World is Ending!
         {% endif %}
-
     weatherxm_wind_speed_knots:
       friendly_name: "WeatherXM Wind Speed (Knots)"
       value_template: >-
         {% set speed = states('sensor.weatherxm_wind_speed') | float(0) %}
         {{ (speed * 1.94384) | round(2) }}
       unit_of_measurement: "kt"
-
     weatherxm_wind_speed_kmh:
       friendly_name: "WeatherXM Wind Speed (km/h)"
       value_template: >-
