@@ -14,7 +14,7 @@ Here's an example of a weather dashboard created with the data:
 
 In Home Assistant, create a new serial sensor in the `configuration.yaml` file. If you have a separate `sensors.yaml` file, do it there.
 
-Next, find out which port your WeatherXM is plugged into. Go to **Settings -> System -> Hardware -> All Hardware** and look for USB. There should be an entry with `usb-Espressif_USB_JTAG...` in the description. Click on the arrow to the right and copy the device path. It should be something like `/dev/ttyACM0`. On the RPi 4 it should default to `/dev/ttyUSB0`
+Next, find out which port your WeatherXM is plugged into. Go to **Settings -> System -> Hardware -> All Hardware** and look for USB. There should be an entry with `usb-Espressif_USB_JTAG...` in the description. Click on the arrow to the right and copy the device path. It should be something like `/dev/ttyACM0`.
 
 Next, add the sensor to the `.yaml` file as shown below. If you don't have a `sensors.yaml` file, do this in the `configuration.yaml` file under the `sensors` section.
 
