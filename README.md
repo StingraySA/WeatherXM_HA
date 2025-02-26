@@ -4,6 +4,8 @@ This repo was created to help WeatherXM users retrieve data that is streamed fro
 
 **This does not affect your ability to mine at all. We are merely listening on the wire as the data is streamed from the weather station**
 
+**Data streaming is sporadic during the first day that your stations is up and running. As soon as it's verified it's location, the data streams in real time**
+
 ![Sensors](./WeatherXM%20Sensors.png)
 
 Here's an example of a weather dashboard created with the data:
