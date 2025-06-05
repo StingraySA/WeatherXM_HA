@@ -14,7 +14,7 @@ Here's an example of a weather dashboard created with the data:
 
 ### Start Here
 
-First plug in the WeatherXM LCD screen into your RPi. Use the USB connector on the back of the unit. The one on the bottom doesn't have debugging enabled (Well on mine at least). Plug the other side into one of the USB 3.0 ports (The blue ones).
+First plug in the WeatherXM LCD screen into your RPi. Use the USB connector on the back of the unit. The one on the bottom doesn't have debugging enabled (Well on mine at least). Plug the other side into one of the USB 3.0 ports (The blue ones) on the RPi.
 
 In Home Assistant, create a new serial sensor in the `configuration.yaml` file. If you have a separate `sensors.yaml` file, do it there.
 
