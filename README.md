@@ -48,16 +48,22 @@ Then, add the following template sensors to extract the values from the debug ou
       unit_of_measurement: "°C"
     weatherxm_humidity:
       friendly_name: "WeatherXM Humidity"
+      device_class: humidity
+      unit_of_measurement: "%"
       value_template: >-
         {% set value = states('sensor.weatherxm') %}
-        {% if '"humidity":' in value %}
-          {{ value.split('"humidity": ')[1].split(',')[0] }}
-        {% elif 'Humidity:' in value %}
-          {{ value.split('Humidity: ')[1].split(' ')[0] }}
+        {% set current_value = states('sensor.weatherxm_humidity') | float(0) %}
+        {% if value and value != 'unknown' and value != 'unavailable' %}
+          {% if '"humidity":' in value and value.split('"humidity:" ') | length > 1 %}
+            {{ value.split('"humidity:" ')[1].split(',')[0] | float(current_value) }}
+          {% elif 'Humidity:' in value and value.split('Humidity: ') | length > 1 %}
+            {{ value.split('Humidity: ')[1] | float(current_value) }}
+          {% else %}
+            {{ current_value }}
+          {% endif %}
         {% else %}
-          unknown
+          {{ current_value }}
         {% endif %}
-      unit_of_measurement: "%"
     weatherxm_wind_speed:
       friendly_name: "WeatherXM Wind Speed"
       value_template: >-
