@@ -29,7 +29,8 @@ Next, add the sensor to the `.yaml` file as shown below. If you don't have a `se
   value_template: "{{ value[:255] }}"
 ```
 
-Then, add the following template sensors to extract the values from the debug output of the WeatherXM panel.
+Then, add the following template sensors to extract the values from the debug output of the WeatherXM panel to your `templates.yaml` file.
+If you don't have a `templates.yaml` file, create one, and add this line to your `configuration.yaml`: `template: !include templates.yaml`
 
 ```yaml
     # ——— WEATHERXM SENSORS – PRESERVE LAST VALUE WHEN FIELD MISSING ———
