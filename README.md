@@ -32,184 +32,184 @@ Next, add the sensor to the `.yaml` file as shown below. If you don't have a `se
 Then, add the following template sensors to extract the values from the debug output of the WeatherXM panel.
 
 ```yaml
-- platform: template
-  sensors:
-    weatherxm_temperature:
-      friendly_name: "WeatherXM Temperature"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"temperature":' in value %}
-          {{ value.split('"temperature": ')[1].split(',')[0] }}
-        {% elif 'Temperature:' in value %}
-          {{ value.split('Temperature: ')[1].split(' C')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
+    # ——— WEATHERXM SENSORS – PRESERVE LAST VALUE WHEN FIELD MISSING ———
+    - name: WeatherXM Temperature
+      unique_id: weatherxm_temperature
       unit_of_measurement: "°C"
-    weatherxm_humidity:
-      friendly_name: "WeatherXM Humidity"
-      device_class: humidity
+      device_class: temperature
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_temperature') | float(default=none) %}
+        {% if '"temperature":' in v %}{{ v.split('"temperature": ')[1].split(',')[0] | float }}
+        {% elif 'Temperature:' in v %}{{ v.split('Temperature: ')[1].split(' C')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Humidity
+      unique_id: weatherxm_humidity
       unit_of_measurement: "%"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% set current_value = states('sensor.weatherxm_humidity') | float(0) %}
-        {% if value and value != 'unknown' and value != 'unavailable' %}
-          {% if '"humidity":' in value and value.split('"humidity:" ') | length > 1 %}
-            {{ value.split('"humidity:" ')[1].split(',')[0] | float(current_value) }}
-          {% elif 'Humidity:' in value and value.split('Humidity: ') | length > 1 %}
-            {{ value.split('Humidity: ')[1] | float(current_value) }}
-          {% else %}
-            {{ current_value }}
-          {% endif %}
-        {% else %}
-          {{ current_value }}
-        {% endif %}
-    weatherxm_wind_speed:
-      friendly_name: "WeatherXM Wind Speed"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"wind_speed":' in value %}
-          {{ value.split('"wind_speed": ')[1].split(',')[0] }}
-        {% elif 'Wind speed:' in value %}
-          {{ value.split('Wind speed: ')[1].split(' m/S')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
+      device_class: humidity
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_humidity') | float(default=none) %}
+        {% if '"humidity":' in v %}{{ v.split('"humidity": ')[1].split(',')[0] | float }}
+        {% elif 'Humidity:' in v %}{{ v.split('Humidity: ')[1].split(' %')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Wind Speed
+      unique_id: weatherxm_wind_speed
       unit_of_measurement: "m/s"
-    weatherxm_wind_gust:
-      friendly_name: "WeatherXM Wind Gust"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"wind_gust":' in value %}
-          {{ value.split('"wind_gust": ')[1].split(',')[0] }}
-        {% elif 'Gust:' in value %}
-          {{ value.split('Gust: ')[1].split(' m/S')[0] }}
+      icon: mdi:weather-windy
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_wind_speed') | float(default=0) %}
+        {% if '"wind_speed":' in v %}
+          {{ v.split('"wind_speed": ')[1].split(',')[0] | float(default=cur) }}
+        {% elif 'Wind speed:' in v %}
+          {{ v.split('Wind speed: ')[1].split(' m/s')[0] | trim | replace(' m/S', '') | float(default=cur) }}
         {% else %}
-          unknown
+          {{ cur }}
         {% endif %}
+
+    - name: WeatherXM Wind Gust
+      unique_id: weatherxm_wind_gust
       unit_of_measurement: "m/s"
-    weatherxm_wind_direction:
-      friendly_name: "WeatherXM Wind Direction"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"wind_direction":' in value %}
-          {{ value.split('"wind_direction": ')[1].split(',')[0] }}
-        {% elif 'Wind Dir:' in value %}
-          {{ value.split('Wind Dir: ')[1].split(' deg')[0] }}
+      icon: mdi:weather-windy
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_wind_gust') | float(default=0) %}
+        {% if '"wind_gust":' in v %}
+          {{ v.split('"wind_gust": ')[1].split(',')[0] | float(default=cur) }}
+        {% elif 'Gust:' in v %}
+          {{ v.split('Gust: ')[1].split(' m/s')[0] | trim | replace(' m/S', '') | float(default=cur) }}
         {% else %}
-          unknown
+          {{ cur }}
         {% endif %}
+
+    - name: WeatherXM Wind Direction
+      unique_id: weatherxm_wind_direction
       unit_of_measurement: "°"
-    weatherxm_illuminance:
-      friendly_name: "WeatherXM Illuminance"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"illuminance":' in value %}
-          {{ value.split('"illuminance": ')[1].split(',')[0] }}
-        {% elif 'Illuminance:' in value %}
-          {{ value.split('Illuminance: ')[1].split(' lux')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
-      unit_of_measurement: "lux"
-    weatherxm_solar_irradiance:
-      friendly_name: "WeatherXM Solar Irradiance"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"solar_irradiance":' in value %}
-          {{ value.split('"solar_irradiance": ')[1].split(',')[0] }}
-        {% elif 'Solar rad:' in value %}
-          {{ value.split('Solar rad: ')[1].split(' w/m^2')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
-      unit_of_measurement: "w/m²"
-    weatherxm_uv_index:
-      friendly_name: "WeatherXM UV Index"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"uv_index":' in value %}
-          {{ value.split('"uv_index": ')[1].split(',')[0] }}
-        {% else %}
-          0
-        {% endif %}
-    weatherxm_precipitation_accumulated:
-      friendly_name: "WeatherXM Precipitation Accumulated"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"precipitation_accumulated":' in value %}
-          {{ value.split('"precipitation_accumulated": ')[1].split(',')[0] }}
-        {% elif 'Rain (cml):' in value %}
-          {{ value.split('Rain (cml): ')[1].split(' mm')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
-      unit_of_measurement: "mm"
-    weatherxm_battery_voltage:
-      friendly_name: "WeatherXM Battery Voltage"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"ws_bat_mv":' in value %}
-          {{ value.split('"ws_bat_mv": ')[1].split(',')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
-      unit_of_measurement: "mV"
-    weatherxm_pressure:
-      friendly_name: "WeatherXM Pressure"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"pressure":' in value %}
-          {{ value.split('"pressure": ')[1].split(',')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
-      unit_of_measurement: "hPa"
-    weatherxm_precipitation_rate:
-      friendly_name: "WeatherXM Precipitation Rate"
-      value_template: >-
-        {% set value = states('sensor.weatherxm') %}
-        {% if '"precipitation_rate":' in value %}
-          {{ value.split('"precipitation_rate": ')[1].split(',')[0] }}
-        {% else %}
-          unknown
-        {% endif %}
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_wind_direction') | float(default=none) %}
+        {% if '"wind_direction":' in v %}{{ v.split('"wind_direction": ')[1].split(',')[0] | float }}
+        {% elif 'Wind Dir:' in v %}{{ v.split('Wind Dir: ')[1].split(' deg')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Illuminance
+      unique_id: weatherxm_illuminance
+      unit_of_measurement: lx
+      device_class: illuminance
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_illuminance') | float(default=none) %}
+        {% if '"illuminance":' in v %}{{ v.split('"illuminance": ')[1].split(',')[0] | float }}
+        {% elif 'Illuminance:' in v %}{{ v.split('Illuminance: ')[1].split(' lux')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Solar Irradiance
+      unique_id: weatherxm_solar_irradiance
+      unit_of_measurement: "W/m²"
+      device_class: irradiance
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_solar_irradiance') | float(default=none) %}
+        {% if '"solar_irradiance":' in v %}{{ v.split('"solar_irradiance": ')[1].split(',')[0] | float }}
+        {% elif 'Solar rad:' in v %}{{ v.split('Solar rad: ')[1].split(' w/m^2')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM UV Index
+      unique_id: weatherxm_uv_index
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_uv_index') | float(default=none) %}
+        {% if '"uv_index":' in v %}{{ v.split('"uv_index": ')[1].split(',')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Precipitation Accumulated
+      unique_id: weatherxm_precipitation_accumulated
+      unit_of_measurement: mm
+      device_class: precipitation
+      state_class: total_increasing
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_precipitation_accumulated') | float(default=none) %}
+        {% if '"precipitation_accumulated":' in v %}{{ v.split('"precipitation_accumulated": ')[1].split(',')[0] | float }}
+        {% elif 'Rain (cml):' in v %}{{ v.split('Rain (cml): ')[1].split(' mm')[0] | float }}
+        {% else %}{{ cur if cur is not none else 0 }}{% endif %}
+
+    - name: WeatherXM Daily Rainfall
+      unique_id: weatherxm_daily_rainfall
+      unit_of_measurement: mm
+      device_class: precipitation
+      state_class: total_increasing
+      icon: mdi:weather-rainy
+      state: >-
+        {% set total = states('sensor.weatherxm_precipitation_accumulated') | float(default=none) %}
+        {% set stored = states('input_number.weatherxm_rain_accumulated_storage') | float(default=0) %}
+        {% if total is none %}0{% else %}{{ (total - stored) | max(0) | round(2) }}{% endif %}
+
+    - name: WeatherXM Battery Voltage
+      unique_id: weatherxm_battery_voltage
+      unit_of_measurement: mV
+      device_class: voltage
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_battery_voltage') | int(default=none) %}
+        {% if '"ws_bat_mv":' in v %}{{ v.split('"ws_bat_mv": ')[1].split(',')[0] | int }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Pressure
+      unique_id: weatherxm_pressure
+      unit_of_measurement: hPa
+      device_class: pressure
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_pressure') | float(default=none) %}
+        {% if '"pressure":' in v %}{{ v.split('"pressure": ')[1].split(',')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Precipitation Rate
+      unique_id: weatherxm_precipitation_rate
       unit_of_measurement: "mm/h"
-    weatherxm_wind_compass:
-      friendly_name: "WeatherXM Wind Direction Compass"
-      value_template: >-
-        {% set degrees = states('sensor.weatherxm_wind_direction') | float(0) %}
-        {% if degrees >= 337.5 or degrees < 22.5 %}
-          N
-        {% elif degrees >= 22.5 and degrees < 67.5 %}
-          NE
-        {% elif degrees >= 67.5 and degrees < 112.5 %}
-          E
-        {% elif degrees >= 112.5 and degrees < 157.5 %}
-          SE
-        {% elif degrees >= 157.5 and degrees < 202.5 %}
-          S
-        {% elif degrees >= 202.5 and degrees < 247.5 %}
-          SW
-        {% elif degrees >= 247.5 and degrees < 292.5 %}
-          W
-        {% elif degrees >= 292.5 and degrees < 337.5 %}
-          NW
-        {% else %}
-          The World is Ending!
-        {% endif %}
-    weatherxm_wind_speed_knots:
-      friendly_name: "WeatherXM Wind Speed (Knots)"
-      value_template: >-
-        {% set speed = states('sensor.weatherxm_wind_speed') | float(0) %}
-        {{ (speed * 1.94384) | round(2) }}
-      unit_of_measurement: "kt"
-    weatherxm_wind_speed_kmh:
-      friendly_name: "WeatherXM Wind Speed (km/h)"
-      value_template: >-
-        {% set speed = states('sensor.weatherxm_wind_speed') | float(0) %}
-        {{ (speed * 3.6) | round(2) }}
+      state_class: measurement
+      state: >-
+        {% set v = states('sensor.weatherxm') %}
+        {% set cur = states('sensor.weatherxm_precipitation_rate') | float(default=none) %}
+        {% if '"precipitation_rate":' in v %}{{ v.split('"precipitation_rate": ')[1].split(',')[0] | float }}
+        {% else %}{{ cur if cur is not none else none }}{% endif %}
+
+    - name: WeatherXM Wind Direction Compass
+      unique_id: weatherxm_wind_compass
+      icon: mdi:compass
+      state: >-
+        {% set d = states('sensor.weatherxm_wind_direction') | float(default=0) %}
+        {% if d >= 337.5 or d < 22.5 %}N{% elif d < 67.5 %}NE{% elif d < 112.5 %}E{% elif d < 157.5 %}SE{% elif d < 202.5 %}S{% elif d < 247.5 %}SW{% elif d < 292.5 %}W{% elif d < 337.5 %}NW{% else %}-{% endif %}
+
+    - name: WeatherXM Wind Speed (Knots)
+      unique_id: weatherxm_wind_speed_knots
+      unit_of_measurement: kt
+      icon: mdi:weather-windy
+      state_class: measurement
+      state: >-
+        {{ (states('sensor.weatherxm_wind_speed') | float(default=0) * 1.94384) | round(2) }}
+
+    - name: WeatherXM Wind Speed (km/h)
+      unique_id: weatherxm_wind_speed_kmh
       unit_of_measurement: "km/h"
+      icon: mdi:weather-windy
+      state_class: measurement
+      state: >-
+        {{ (states('sensor.weatherxm_wind_speed') | float(default=0) * 3.6) | round(2) }}
 ```
 
 ### Excluding from Recorder
@@ -364,24 +364,28 @@ Next we need to add an automation to update our sensor value. So go to Settings 
 In the top right hand corner, click on the three dots and select Edit in YAML.
 
 ```yaml
-alias: Update Max Wind Speed - WeatherXM
-description: Update Max Wind Speed - WeatherXM
-triggers:
-  - entity_id: sensor.weatherxm_wind_speed_kmh
-    trigger: state
-conditions:
-  - condition: numeric_state
-    entity_id: sensor.weatherxm_wind_speed_kmh
-    above: input_number.weatherxm_daily_max_wind_speed
-  - condition: numeric_state
-    entity_id: sensor.weatherxm_wind_speed_kmh
-    above: -0.1
-actions:
-  - data:
-      value: "{{ states('sensor.weatherxm_wind_speed_kmh') | float }}"
-    target:
-      entity_id: input_number.weatherxm_daily_max_wind_speed
-    action: input_number.set_value
+alias: "[WeatherXM] Update Max Wind Speed"
+description: Updates daily max wind speed ONLY when a new record is reached
+trigger:
+  - platform: state
+    entity_id: sensor.weatherxm_wind_speed_kmh   # ← this one MUST exist and be working
+condition: []
+action:
+  - variables:
+      current_wind: >-
+        {{ states('sensor.weatherxm_wind_speed_kmh') | float(default=0) }}
+      current_max: >-
+        {{ states('input_number.weatherxm_daily_max_wind_speed') | float(default=0) }}
+  - choose:
+      - conditions: >-
+          {{ current_wind > current_max }}
+        sequence:
+          - service: input_number.set_value
+            target:
+              entity_id: input_number.weatherxm_daily_max_wind_speed
+            data:
+              value: "{{ current_wind }}"
+    default: []
 mode: single
 ```
 
